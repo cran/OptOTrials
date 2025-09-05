@@ -1,0 +1,11 @@
+export("Decision_rule_M.F", "Decision_rule_M_1stage",
+       "Decision_rule_M.FS", "Decision_rule_S.F",
+       "Decision_rule_S_1stage",
+       "Decision_rule_S.FS", "Decision_rule_W.F",
+       "Decision_rule_W_1stage",
+       "Decision_rule_W.FS", "op.1stage", "op.F",
+       "op.FS", "p_minus", "p_plus", "p2_fun",
+       "pq_fun", "Proportional_odds_assumption",
+       "QR_fun", "ruleF", "ruleFS", "theta",
+       "V_S.over.nk", "W_W")
+importFrom("stats", "pnorm", "qnorm")

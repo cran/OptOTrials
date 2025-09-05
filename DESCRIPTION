@@ -1,0 +1,30 @@
+Package: OptOTrials
+Type: Package
+Title: Optimal Two-Stage Designs for Ordered Categorical Outcomes
+Version: 1.0.2
+Date: 2025-08-17
+Authors@R: c(
+    person(given = "Yeonhee", family = "Park",
+           email = "yeonheepark@skku.edu",
+           role = c("aut","cre")),
+    person(given = "Yudi", family = "Wang", role = "aut"),
+    person(given = "Zhanpeng", family = "Xu", role = "aut"))
+Description: Functions to design and simulate optimal two-stage randomized
+    controlled trials (RCTs) with ordered categorical outcomes, supporting
+    rank-based tests and group-sequential decision rules. Methods build on
+    classical and modern rank tests and two-stage/Group-Sequential designs,
+    e.g., Park (2025) <doi: 10.1371/journal.pone.0318211>.  Please see the package reference
+    manual and vignettes for details. 
+License: GPL-3
+Encoding: UTF-8
+Depends: R (>= 4.0)
+Imports: stats
+RoxygenNote: 7.3.2
+NeedsCompilation: no
+Packaged: 2025-09-01 09:24:41 UTC; ypark56
+Author: Yeonhee Park [aut, cre],
+  Yudi Wang [aut],
+  Zhanpeng Xu [aut]
+Maintainer: Yeonhee Park <yeonheepark@skku.edu>
+Repository: CRAN
+Date/Publication: 2025-09-05 20:40:02 UTC
