@@ -1,5 +1,9 @@
-op.FS <-
+.op.FS <-
 function(alpha, beta, p1, p2, method, n1, t1l, t1u, n2, t2, nsim = 10000, lambda = 1){
+  ## Input validation (Reviewer 1, comment 15): applied at every exported
+  ## entry point, not only at rule() and op().
+  .validate_probs(p1, p2)
+
   
   stopifnot(method %in% c("S", "M", "W"))
   if (is.na(n1) || is.na(t1l) || is.na(t1u) || is.na(n2) || is.na(t2)) {
@@ -71,15 +75,16 @@ function(alpha, beta, p1, p2, method, n1, t1l, t1u, n2, t2, nsim = 10000, lambda
       T2 <- count/(sum(group12)*sum(group22))
     }
     
+    ## One exhaustive rule, so that no value of T1 can fall through.  The
+    ## superiority test is strict, matching Pr(T1 > t1s) in the paper, so that
+    ## T1 exactly equal to the upper boundary continues to the second stage.
     if (T1 <= t1l) {
       out1[sim] <- "Early Stop for futility"
       pts[sim] <- n.interim[1]
-    } 
-    if (T1 >= t1u) {
+    } else if (T1 > t1u) {
       out1[sim] <- "Early Stop for superiority"
       pts[sim] <- n.interim[1]
-    } 
-    if(t1l < T1 & T1 < t1u){
+    } else {
       if (T2 > t2) {
         out1[sim] <- "Reject all"
         pts[sim] <- n.interim[2]

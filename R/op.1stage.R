@@ -1,5 +1,9 @@
-op.1stage <-
+.op.1stage <-
 function(alpha, beta, p1, p2, method, n2, t2, nsim = 10000, lambda = 1){
+  ## Input validation (Reviewer 1, comment 15): applied at every exported
+  ## entry point, not only at rule() and op().
+  .validate_probs(p1, p2)
+
   
   stopifnot(method %in% c("S", "M", "W"))
   if (is.na(n2) || is.na(t2)) {

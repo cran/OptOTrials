@@ -1,5 +1,9 @@
-ruleF <-
+.ruleF <-
 function(alpha, beta, p1, p2, method, criterion, lambda = 1) {
+  ## Input validation (Reviewer 1, comment 15): applied at every exported
+  ## entry point, not only at rule() and op().
+  .validate_probs(p1, p2)
+
   
   stopifnot(method %in% c("S", "M", "W"))
   stopifnot(criterion %in% c(1, 2, 3, 4, 5))
@@ -17,7 +21,7 @@ function(alpha, beta, p1, p2, method, criterion, lambda = 1) {
   for(i in 1:lalpha1){
     for (j in 1:lbeta1){
       if(method == "S"){
-        res = Decision_rule_S.F(p1, p2, alpha1[i], beta1[j], alpha, beta, lambda)
+        res = .Decision_rule_S.F(p1, p2, alpha1[i], beta1[j], alpha, beta, lambda)
         n1 <- res[1]
         t1 <- res[2]
         n2 <- res[3]
@@ -29,14 +33,14 @@ function(alpha, beta, p1, p2, method, criterion, lambda = 1) {
         # }
       }
       if(method == "M"){
-        res = Decision_rule_M.F(p1, p2, alpha1[i], beta1[j], alpha, beta, lambda)
+        res = .Decision_rule_M.F(p1, p2, alpha1[i], beta1[j], alpha, beta, lambda)
         n1 <- res[1]
         t1 <- res[2]
         n2 <- res[3]
         t2 <- res[4]
       }
       if(method == "W"){
-        res = Decision_rule_W.F(p1, p2, alpha1[i], beta1[j], alpha, beta, lambda)
+        res = .Decision_rule_W.F(p1, p2, alpha1[i], beta1[j], alpha, beta, lambda)
         n1 <- res[1]
         t1 <- res[2]
         n2 <- res[3]
@@ -68,21 +72,21 @@ function(alpha, beta, p1, p2, method, criterion, lambda = 1) {
     for(iter in 1:num_of_choice){
       i=ind[iter,1]; j=ind[iter,2]
       if(method == "S"){
-        res = Decision_rule_S.F(p1, p2, alpha1[i], beta1[j], alpha, beta, lambda)
+        res = .Decision_rule_S.F(p1, p2, alpha1[i], beta1[j], alpha, beta, lambda)
         n1 <- res[1]
         t1 <- res[2]
         n2 <- res[3]
         t2 <- res[4]
       }
       if(method == "M"){
-        res = Decision_rule_M.F(p1, p2, alpha1[i], beta1[j], alpha, beta, lambda)
+        res = .Decision_rule_M.F(p1, p2, alpha1[i], beta1[j], alpha, beta, lambda)
         n1 <- res[1]
         t1 <- res[2]
         n2 <- res[3]
         t2 <- res[4]
       }
       if(method == "W"){
-        res = Decision_rule_W.F(p1, p2, alpha1[i], beta1[j], alpha, beta, lambda)
+        res = .Decision_rule_W.F(p1, p2, alpha1[i], beta1[j], alpha, beta, lambda)
         n1 <- res[1]
         t1 <- res[2]
         n2 <- res[3]
@@ -138,21 +142,21 @@ function(alpha, beta, p1, p2, method, criterion, lambda = 1) {
   zb2 <- qnorm(beta-beta1[j],lower.tail = FALSE)
   
   if(method == "S"){
-    res = Decision_rule_S.F(p1, p2, alpha1[i], beta1[j], alpha, beta, lambda)
+    res = .Decision_rule_S.F(p1, p2, alpha1[i], beta1[j], alpha, beta, lambda)
     n1 <- res[1]
     t1 <- res[2]
     n2 <- res[3]
     t2 <- res[4]
   }
   if(method == "M"){
-    res = Decision_rule_M.F(p1, p2, alpha1[i], beta1[j], alpha, beta, lambda)
+    res = .Decision_rule_M.F(p1, p2, alpha1[i], beta1[j], alpha, beta, lambda)
     n1 <- res[1]
     t1 <- res[2]
     n2 <- res[3]
     t2 <- res[4]
   }
   if(method == "W"){
-    res = Decision_rule_W.F(p1, p2, alpha1[i], beta1[j], alpha, beta, lambda)
+    res = .Decision_rule_W.F(p1, p2, alpha1[i], beta1[j], alpha, beta, lambda)
     n1 <- res[1]
     t1 <- res[2]
     n2 <- res[3]

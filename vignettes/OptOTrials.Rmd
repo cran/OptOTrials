@@ -1,0 +1,149 @@
+---
+title: "Designing two-stage trials with ordered categorical outcomes"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Designing two-stage trials with ordered categorical outcomes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(OptOTrials)
+```
+
+## Overview
+
+`OptOTrials` constructs optimal one- and two-stage randomised trial designs for
+ordered categorical outcomes. The whole workflow runs through two functions:
+
+* `rule()` builds a decision rule;
+* `op()` estimates its operating characteristics by simulation.
+
+The test statistic and the monitoring scheme are chosen by argument, so you do
+not need to remember a different function name for each combination.
+
+## Step 1: check the proportional odds assumption
+
+The score test (`test = "S"`) is only appropriate when the proportional odds
+assumption holds. `Proportional_odds_assumption()` reports whether it does and
+returns the implied common log odds ratio.
+
+```{r}
+p1 <- c(0.075, 0.182, 0.319, 0.243, 0.015, 0.166)
+p2 <- p2_fun(p1, log(3.06))
+Proportional_odds_assumption(p1, p2)
+```
+
+When the assumption fails the function says so and warns, so the condition
+cannot pass unnoticed in a script:
+
+```{r}
+q1 <- c(1/3, 1/3, 1/3)
+q2 <- c(1/2, 1/3, 1/6)
+res <- tryCatch(Proportional_odds_assumption(q1, q2), warning = function(w) NA)
+res
+```
+
+For that scenario use the Mann-Whitney-Wilcoxon test (`"M"`) or the win odds
+test (`"W"`) instead.
+
+## Step 2: build a design
+
+`p2_fun()` is a helper in this package that constructs the experimental-group
+category probabilities from the control probabilities and a specified log odds
+ratio under the proportional odds model, as used above.
+
+```{r}
+d <- rule(alpha = 0.05, beta = 0.2, p1 = p1, p2 = p2,
+          test = "M", stopping = "F", criterion = 1)
+d
+```
+
+The printed output names every quantity and additionally translates each
+boundary onto an effect-size scale, so the design can be communicated to
+non-statistician collaborators: for the score test the implied odds ratio, and
+for the rank-based tests the implied win odds.
+
+Individual components are available by name, so no positional indexing is
+needed:
+
+```{r}
+d$n1
+d$t1f
+d$effect
+```
+
+## Step 3: operating characteristics
+
+```{r}
+o <- op(d, nsim = 2000, seed = 1234)
+o
+```
+
+Both hypotheses are evaluated in one call. Futility and superiority stopping
+probabilities are reported separately, and Monte Carlo standard errors are
+attached so that a deviation of the estimated type I error rate from the
+nominal level can be judged against simulation noise.
+
+Supplying `seed` re-seeds immediately before each scenario, so the result does
+not depend on how much randomness has already been consumed.
+
+## Step 4: comparing criteria
+
+`design_table()` sweeps a set of tests and criteria and returns a data frame,
+re-seeding for every row so each row reproduces on its own.
+
+```{r}
+design_table(0.05, 0.2, p1, p2, tests = c("S", "M"), criteria = c(1, 3),
+             stopping = "F", nsim = 1000)
+```
+
+## Degenerate optima
+
+Criterion 2 minimises the expected sample size under the alternative. This can
+drive the optimum to a stage-1 size of 1 with an extreme interim boundary: the
+criterion rewards designs under which continuation to the final analysis is
+almost certain when the treatment works, so the optimiser commits essentially
+all information to the final analysis and the design becomes two-stage in name
+only.
+
+`rule()` detects this. By default it warns and substitutes the single-stage
+design:
+
+```{r}
+d2 <- rule(0.05, 0.2, p1, p2, test = "M", stopping = "F", criterion = 2)
+d2$substituted
+```
+
+Use `on_degenerate = "none"` to inspect the raw optimum, or `"error"` to make
+it fail loudly in an automated pipeline.
+
+## Choosing between asymptotic and exact approaches
+
+The designs rely on the asymptotic normality of the test statistics. This is
+adequate at the stage-1 sizes arising in typical applications, but the
+approximation degrades when the stage-1 size is small or when some outcome
+categories are rare. In those situations an exact approach is preferable; see
+the package reference manual for the relevant references.
+
+## Moving from the earlier interface
+
+Versions up to 1.0.2 provided a separate function for each combination of test
+and stopping rule (`ruleF()`, `ruleFS()`, `op.F()`, `op.FS()`, `op.1stage()`
+and the `Decision_rule_*` family). These are deprecated in this version: each still
+works and still returns exactly what it always returned, but warns and names
+its replacement. They will be removed in version 1.1.0. The correspondence is
+tabulated in `help("OptOTrials-deprecated")`:
+
+| Deprecated | Replacement |
+|---|---|
+| `ruleF()`, `ruleFS()` | `rule(..., stopping = "F"/"FS")` |
+| `Decision_rule_{S,M,W}.F` / `.FS` / `_1stage` | `rule(..., test = ..., stopping = ...)` |
+| `op.F()`, `op.FS()`, `op.1stage()` | `op(design, nsim, seed)` |
+
+Two habits change. `rule()` returns a named object, so `res[3]` becomes
+`res$n1`, and the object is passed straight to `op()` instead of its elements
+being transcribed. `op()` evaluates both hypotheses in one call, so the old
+pattern of calling the simulator twice, once with `(p1, p2)` and once with
+`(p1, p1)`, is no longer needed.

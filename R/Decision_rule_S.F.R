@@ -1,11 +1,15 @@
-Decision_rule_S.F <-
+.Decision_rule_S.F <-
 function(p1, p2, alpha1, beta1, alpha, beta, lambda = 1){
+  ## Input validation (Reviewer 1, comment 15): applied at every exported
+  ## entry point, not only at rule() and op().
+  .validate_probs(p1, p2)
 
-  if(is.na(Proportional_odds_assumption(p1, p2))){
+
+  if(is.na(.po_logor(p1, p2))){
     # print("In this case, the proportional odds assumption does not hold. It is not desirable to use the Score test.")
     return(c(NA, NA, NA, NA))
   }else{
-    theta_S = Proportional_odds_assumption(p1, p2)  # log odds ratio
+    theta_S = .po_logor(p1, p2)  # log odds ratio
   }
   
   za1 = qnorm(alpha1, lower.tail = FALSE)

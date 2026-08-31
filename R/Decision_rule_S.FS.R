@@ -1,10 +1,23 @@
-Decision_rule_S.FS <-
+## Notation follows the article: t1f is the interim futility boundary,
+## t1s the interim superiority boundary, t2 the final boundary, and
+## beta3 = Pr(T1 <= t1s | Ha) the continuation-side quantity of the FS
+## design. beta2 = beta - beta1 belongs to the F design and does not
+## appear here.
+## The score statistic has mean theta_S * V * n and standard deviation
+## sqrt(V * n), so both scale with the sample size and the mean term below
+## carries the factor n1. The rank-based tests use statistics whose mean
+## does not depend on n, which is why their expressions differ.
+.Decision_rule_S.FS <-
 function(p1, p2, alpha1, alpha2, beta1, alpha, beta, lambda = 1) {
+  ## Input validation (Reviewer 1, comment 15): applied at every exported
+  ## entry point, not only at rule() and op().
+  .validate_probs(p1, p2)
+
   
-  if (is.na(Proportional_odds_assumption(p1, p2))) {
+  if (is.na(.po_logor(p1, p2))) {
     return(rep(NA, 6))
   } else{
-    theta_S <- Proportional_odds_assumption(p1, p2)  # log odds ratio
+    theta_S <- .po_logor(p1, p2)  # log odds ratio
   }
   
   za1 <- qnorm(alpha1, lower.tail = FALSE)
@@ -19,14 +32,20 @@ function(p1, p2, alpha1, alpha2, beta1, alpha, beta, lambda = 1) {
   theta0 <- 0   # the value of theta_S under null hypothesis
   
   n1 <- ((za1 * sqrt(V_S.over.nk1) + zb1 * sqrt(V_S.over.nk2)) / (theta_S * V_S.over.nk2 - theta0 * V_S.over.nk1)) ^ 2
-  t1l <- theta0 * V_S.over.nk1 * n1 + za1 * sqrt(V_S.over.nk1 * n1)
-  t1u <- theta0 * V_S.over.nk1 * n1 + za2 * sqrt(V_S.over.nk1 * n1)
+  t1f <- theta0 * V_S.over.nk1 * n1 + za1 * sqrt(V_S.over.nk1 * n1)
+  t1s <- theta0 * V_S.over.nk1 * n1 + za2 * sqrt(V_S.over.nk1 * n1)
   
   n2 <- ((zaa2 * sqrt(V_S.over.nk1) + zbb1 * sqrt(V_S.over.nk2)) / (theta_S * V_S.over.nk2 - theta0 * V_S.over.nk1)) ^ 2
   t2 <- theta0 * V_S.over.nk1 * n2 + zaa2 * sqrt(V_S.over.nk1 * n2)
   
-  z.beta2 <- (theta_S * V_S.over.nk2 - t1u) / sqrt(V_S.over.nk2 * n1)
-  beta2 <- pnorm(z.beta2, mean = 0, sd = 1, lower.tail = FALSE)
+  ## beta3 = Pr(T1 <= t1s | Ha), the quantity the article defines where the
+  ## interim rule is introduced. It is NOT beta2 = beta - beta1, which belongs
+  ## to the F design. The score statistic has mean theta_S * V * n and standard
+  ## deviation sqrt(V * n), so the mean term carries the factor n1. The
+  ## rank-based tests use statistics whose mean does not scale with n, which is
+  ## why their expressions have no such factor.
+  z.beta3 <- (theta_S * V_S.over.nk2 * n1 - t1s) / sqrt(V_S.over.nk2 * n1)
+  beta3 <- pnorm(z.beta3, mean = 0, sd = 1, lower.tail = FALSE)
   
-  return(c(n1, t1l, t1u, n2, t2, beta2))
+  return(c(n1, t1f, t1s, n2, t2, beta3))
 }

@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Designing two-stage trials with ordered categorical outcomes</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Designing two-stage trials with ordered
+categorical outcomes</h1>
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p><code>OptOTrials</code> constructs optimal one- and two-stage
+randomised trial designs for ordered categorical outcomes. The whole
+workflow runs through two functions:</p>
+<ul>
+<li><code>rule()</code> builds a decision rule;</li>
+<li><code>op()</code> estimates its operating characteristics by
+simulation.</li>
+</ul>
+<p>The test statistic and the monitoring scheme are chosen by argument,
+so you do not need to remember a different function name for each
+combination.</p>
+</div>
+<div id="step-1-check-the-proportional-odds-assumption" class="section level2">
+<h2>Step 1: check the proportional odds assumption</h2>
+<p>The score test (<code>test = &quot;S&quot;</code>) is only appropriate when the
+proportional odds assumption holds.
+<code>Proportional_odds_assumption()</code> reports whether it does and
+returns the implied common log odds ratio.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.075</span>, <span class="fl">0.182</span>, <span class="fl">0.319</span>, <span class="fl">0.243</span>, <span class="fl">0.015</span>, <span class="fl">0.166</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">p2_fun</span>(p1, <span class="fu">log</span>(<span class="fl">3.06</span>))</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">Proportional_odds_assumption</span>(p1, p2)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt; The proportional odds assumption holds. Common log odds ratio = 1.11841 (odds ratio = 3.0600); the score test is appropriate.</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co">#&gt; [1] 1.11841</span></span></code></pre></div>
+<p>When the assumption fails the function says so and warns, so the
+condition cannot pass unnoticed in a script:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>q1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>q2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">6</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">tryCatch</span>(<span class="fu">Proportional_odds_assumption</span>(q1, q2), <span class="at">warning =</span> <span class="cf">function</span>(w) <span class="cn">NA</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt; The proportional odds assumption does not hold for the supplied probabilities. It is not advisable to use the score test; consider the Mann-Whitney-Wilcoxon test (&quot;M&quot;) or the win odds test (&quot;W&quot;).</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>res</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt; [1] NA</span></span></code></pre></div>
+<p>For that scenario use the Mann-Whitney-Wilcoxon test
+(<code>&quot;M&quot;</code>) or the win odds test (<code>&quot;W&quot;</code>) instead.</p>
+</div>
+<div id="step-2-build-a-design" class="section level2">
+<h2>Step 2: build a design</h2>
+<p><code>p2_fun()</code> is a helper in this package that constructs the
+experimental-group category probabilities from the control probabilities
+and a specified log odds ratio under the proportional odds model, as
+used above.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">rule</span>(<span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">beta =</span> <span class="fl">0.2</span>, <span class="at">p1 =</span> p1, <span class="at">p2 =</span> p2,</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>          <span class="at">test =</span> <span class="st">&quot;M&quot;</span>, <span class="at">stopping =</span> <span class="st">&quot;F&quot;</span>, <span class="at">criterion =</span> <span class="dv">1</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>d</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; Optimal design for an ordered categorical outcome</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; -------------------------------------------------</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; Test          : Mann-Whitney-Wilcoxon test </span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; Monitoring    : two-stage, futility only </span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; Criterion     : 1 - minimise E(N | H0) </span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; Error rates   : alpha = 0.050, beta = 0.200 (power 80.0%)</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; Allocation    : 1 : 1 (control : experimental)</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; Decision rule</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt;   Stage 1: enrol 28 patients in total</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt;     stop for futility     if T1 &lt;= 0.0830</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt;     otherwise continue to stage 2</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt;   Stage 2: enrol up to 89 patients in total</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt;     declare superiority   if T2 &gt;  0.1960</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt; Boundaries on the effect-size scale</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co">#&gt;   interim futility     threshold   0.0830  -&gt;  win odds 1.181</span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="co">#&gt;   final analysis       threshold   0.1960  -&gt;  win odds 1.488</span></span></code></pre></div>
+<p>The printed output names every quantity and additionally translates
+each boundary onto an effect-size scale, so the design can be
+communicated to non-statistician collaborators: for the score test the
+implied odds ratio, and for the rank-based tests the implied win
+odds.</p>
+<p>Individual components are available by name, so no positional
+indexing is needed:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>d<span class="sc">$</span>n1</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; [1] 28</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>d<span class="sc">$</span>t1f</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt; [1] 0.083</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>d<span class="sc">$</span>effect</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt;   boundary            stage threshold    scale effect</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; 1      t1f interim futility     0.083 win odds  1.181</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; 2       t2   final analysis     0.196 win odds  1.488</span></span></code></pre></div>
+</div>
+<div id="step-3-operating-characteristics" class="section level2">
+<h2>Step 3: operating characteristics</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>o <span class="ot">&lt;-</span> <span class="fu">op</span>(d, <span class="at">nsim =</span> <span class="dv">2000</span>, <span class="at">seed =</span> <span class="dv">1234</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>o</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt; Operating characteristics</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt; -------------------------</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; Test          : Mann-Whitney-Wilcoxon test </span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt; Monitoring    : futility only </span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; Criterion     : 1 </span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt; Replicates    : 2000  (seed 1234) </span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt; Scenario        Reject H0 (MCSE)  Stop fut.  Stop super.     Continue      E(N)</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt; H0 (type I)        0.038 (0.004)      0.653        0.000        0.347     49.14</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt; Ha (power)         0.848 (0.008)      0.091        0.000        0.908     83.42</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt;   EN0 = 49.14   ENa = 83.42   EN = 66.28</span></span></code></pre></div>
+<p>Both hypotheses are evaluated in one call. Futility and superiority
+stopping probabilities are reported separately, and Monte Carlo standard
+errors are attached so that a deviation of the estimated type I error
+rate from the nominal level can be judged against simulation noise.</p>
+<p>Supplying <code>seed</code> re-seeds immediately before each
+scenario, so the result does not depend on how much randomness has
+already been consumed.</p>
+</div>
+<div id="step-4-comparing-criteria" class="section level2">
+<h2>Step 4: comparing criteria</h2>
+<p><code>design_table()</code> sweeps a set of tests and criteria and
+returns a data frame, re-seeding for every row so each row reproduces on
+its own.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">design_table</span>(<span class="fl">0.05</span>, <span class="fl">0.2</span>, p1, p2, <span class="at">tests =</span> <span class="fu">c</span>(<span class="st">&quot;S&quot;</span>, <span class="st">&quot;M&quot;</span>), <span class="at">criteria =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>),</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>             <span class="at">stopping =</span> <span class="st">&quot;F&quot;</span>, <span class="at">nsim =</span> <span class="dv">1000</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt;   test criterion n1    t1f n2    t2 alpha se_alpha power se_power p_fut_H0</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#&gt; 1    S         1 29  0.654 91 4.378 0.048   0.0068 0.828   0.0119    0.652</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt; 2    S         3 31 -0.510 67 3.753 0.049   0.0068 0.808   0.0125    0.370</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt; 3    M         1 28  0.083 89 0.196 0.039   0.0061 0.848   0.0114    0.646</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt; 4    M         3 30 -0.058 69 0.223 0.041   0.0063 0.826   0.0120    0.360</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt;   p_sup_H0 p_fut_Ha p_sup_Ha    EN0    ENa      EN degenerate</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt; 1        0    0.106        0 50.576 84.428 67.5020      FALSE</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt; 2        0    0.023        0 53.680 66.172 59.9260      FALSE</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co">#&gt; 3        0    0.092        0 49.594 83.388 66.4910      FALSE</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="co">#&gt; 4        0    0.021        0 54.960 68.181 61.5705      FALSE</span></span></code></pre></div>
+</div>
+<div id="degenerate-optima" class="section level2">
+<h2>Degenerate optima</h2>
+<p>Criterion 2 minimises the expected sample size under the alternative.
+This can drive the optimum to a stage-1 size of 1 with an extreme
+interim boundary: the criterion rewards designs under which continuation
+to the final analysis is almost certain when the treatment works, so the
+optimiser commits essentially all information to the final analysis and
+the design becomes two-stage in name only.</p>
+<p><code>rule()</code> detects this. By default it warns and substitutes
+the single-stage design:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>d2 <span class="ot">&lt;-</span> <span class="fu">rule</span>(<span class="fl">0.05</span>, <span class="fl">0.2</span>, p1, p2, <span class="at">test =</span> <span class="st">&quot;M&quot;</span>, <span class="at">stopping =</span> <span class="st">&quot;F&quot;</span>, <span class="at">criterion =</span> <span class="dv">2</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&gt; Warning: The optimum for test = &quot;M&quot;, criterion = 2 has collapsed to a</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt; degenerate two-stage design (stage-1 sample size n1 = 1 is below min_n1 = 10;</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; the interim futility boundary t1f = -4.715 is so extreme that the trial stops</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; early with probability 0.0000 under H0). Returning the single-stage design</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; instead; set on_degenerate = &quot;none&quot; to obtain the raw optimum.</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>d2<span class="sc">$</span>substituted</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p>Use <code>on_degenerate = &quot;none&quot;</code> to inspect the raw optimum,
+or <code>&quot;error&quot;</code> to make it fail loudly in an automated
+pipeline.</p>
+</div>
+<div id="choosing-between-asymptotic-and-exact-approaches" class="section level2">
+<h2>Choosing between asymptotic and exact approaches</h2>
+<p>The designs rely on the asymptotic normality of the test statistics.
+This is adequate at the stage-1 sizes arising in typical applications,
+but the approximation degrades when the stage-1 size is small or when
+some outcome categories are rare. In those situations an exact approach
+is preferable; see the package reference manual for the relevant
+references.</p>
+</div>
+<div id="moving-from-the-earlier-interface" class="section level2">
+<h2>Moving from the earlier interface</h2>
+<p>Versions up to 1.0.2 provided a separate function for each
+combination of test and stopping rule (<code>ruleF()</code>,
+<code>ruleFS()</code>, <code>op.F()</code>, <code>op.FS()</code>,
+<code>op.1stage()</code> and the <code>Decision_rule_*</code> family).
+These are deprecated in this version: each still works and still returns
+exactly what it always returned, but warns and names its replacement.
+They will be removed in version 1.1.0. The correspondence is tabulated
+in <code>help(&quot;OptOTrials-deprecated&quot;)</code>:</p>
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Deprecated</th>
+<th>Replacement</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ruleF()</code>, <code>ruleFS()</code></td>
+<td><code>rule(..., stopping = &quot;F&quot;/&quot;FS&quot;)</code></td>
+</tr>
+<tr class="even">
+<td><code>Decision_rule_{S,M,W}.F</code> / <code>.FS</code> /
+<code>_1stage</code></td>
+<td><code>rule(..., test = ..., stopping = ...)</code></td>
+</tr>
+<tr class="odd">
+<td><code>op.F()</code>, <code>op.FS()</code>,
+<code>op.1stage()</code></td>
+<td><code>op(design, nsim, seed)</code></td>
+</tr>
+</tbody>
+</table>
+<p>Two habits change. <code>rule()</code> returns a named object, so
+<code>res[3]</code> becomes <code>res$n1</code>, and the object is
+passed straight to <code>op()</code> instead of its elements being
+transcribed. <code>op()</code> evaluates both hypotheses in one call, so
+the old pattern of calling the simulator twice, once with
+<code>(p1, p2)</code> and once with <code>(p1, p1)</code>, is no longer
+needed.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

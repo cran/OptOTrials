@@ -1,11 +1,19 @@
-export("Decision_rule_M.F", "Decision_rule_M_1stage",
-       "Decision_rule_M.FS", "Decision_rule_S.F",
-       "Decision_rule_S_1stage",
-       "Decision_rule_S.FS", "Decision_rule_W.F",
-       "Decision_rule_W_1stage",
-       "Decision_rule_W.FS", "op.1stage", "op.F",
-       "op.FS", "p_minus", "p_plus", "p2_fun",
-       "pq_fun", "Proportional_odds_assumption",
-       "QR_fun", "ruleF", "ruleFS", "theta",
-       "V_S.over.nk", "W_W")
+## Version 1.0.3 introduces rule(), op() and design_table(). Every function
+## exported by 1.0.2 is still exported and still works; the earlier design and
+## simulation functions warn that they are deprecated and will be removed in
+## version 1.1.0.
+export("rule", "op", "design_table",
+       "Proportional_odds_assumption", "p2_fun", "theta")
+
+## Deprecated in 1.0.3, to be removed in 1.1.0
+export("ruleF", "ruleFS", "op.F", "op.FS", "op.1stage",
+       "Decision_rule_S.F", "Decision_rule_S.FS", "Decision_rule_S_1stage",
+       "Decision_rule_M.F", "Decision_rule_M.FS", "Decision_rule_M_1stage",
+       "Decision_rule_W.F", "Decision_rule_W.FS", "Decision_rule_W_1stage")
+
+## Internal computational kernels, exported in 1.0.2 and kept exported here
+export("QR_fun", "V_S.over.nk", "W_W", "p_plus", "p_minus", "pq_fun")
+
+S3method(print, OptOTrialsRule)
+S3method(print, OptOTrialsOC)
 importFrom("stats", "pnorm", "qnorm")

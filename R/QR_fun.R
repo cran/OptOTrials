@@ -1,5 +1,9 @@
 QR_fun <-
 function(p1, p2){
+  ## Input validation (Reviewer 1, comment 15): applied at every exported
+  ## entry point, not only at rule() and op().
+  .validate_probs(p1, p2)
+
   
   k = length(p1)
   DD2 = (p_plus(p1,p2) - p_minus(p1,p2))^2

@@ -1,5 +1,9 @@
-Decision_rule_W.F <-
+.Decision_rule_W.F <-
 function(p1, p2, alpha1, beta1, alpha, beta, lambda = 1){
+  ## Input validation (Reviewer 1, comment 15): applied at every exported
+  ## entry point, not only at rule() and op().
+  .validate_probs(p1, p2)
+
   
   za1 = qnorm(alpha1, lower.tail = FALSE)
   zb1 = qnorm(beta1, lower.tail = FALSE)
