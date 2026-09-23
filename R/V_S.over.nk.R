@@ -3,6 +3,7 @@ function(p1, p2, lambda = 1){
   ## Input validation (Reviewer 1, comment 15): applied at every exported
   ## entry point, not only at rule() and op().
   .validate_probs(p1, p2)
+  .validate_lambda(lambda)
 
   
   part1 = lambda / (3*(lambda+1)^2) 

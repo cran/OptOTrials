@@ -138,16 +138,19 @@ design_table <- function(alpha, beta, p1, p2, tests, criteria,
   if (stopping == "F") out$t1s <- NULL
   rownames(out) <- NULL
 
-  ## When `digits` is supplied the table is rounded for display and EN is then
-  ## recomputed from the rounded EN0 and ENa. This keeps the printed table
-  ## internally consistent, so that a reader who checks EN = (EN0 + ENa)/2
-  ## against the printed values reproduces the printed EN exactly.
+  ## When `digits` is supplied the table is rounded for display. The three
+  ## expected sample sizes are always shown to two decimal places, and each is
+  ## rounded independently from its own full-precision value; EN is not
+  ## recomputed from the rounded EN0 and ENa. Rounding every quantity once,
+  ## from the value actually simulated, is the same convention used by
+  ## print.OptOTrialsOC, so the table and the op() output agree. The cost is
+  ## that (EN0 + ENa)/2 taken from the printed columns can differ from the
+  ## printed EN by up to 0.01.
   if (!is.null(digits)) {
     for (v in c("alpha", "power"))
       out[[v]] <- round(out[[v]], digits)
-    for (v in c("EN0", "ENa"))
+    for (v in c("EN0", "ENa", "EN"))
       out[[v]] <- round(out[[v]], 2)
-    out$EN <- 0.5 * (out$EN0 + out$ENa)
     for (v in c("p_fut_H0", "p_sup_H0", "p_fut_Ha", "p_sup_Ha"))
       out[[v]] <- round(out[[v]], digits)
   }

@@ -1,18 +1,16 @@
-## Version 1.0.3 introduces rule(), op() and design_table(). Every function
-## exported by 1.0.2 is still exported and still works; the earlier design and
-## simulation functions warn that they are deprecated and will be removed in
-## version 1.1.0.
-export("rule", "op", "design_table",
-       "Proportional_odds_assumption", "p2_fun", "theta")
+## Version 1.1.0 exports nine functions: the two-function workflow rule()/op(),
+## the convenience wrapper design_table(), three helpers used to set up and
+## check a design, and the three asymptotic variance kernels that the article's
+## appendix defines and that its reproduction script evaluates directly.
+## The separate function provided for each combination of test and stopping
+## rule up to 1.0.2 was deprecated in 1.0.3 and removed here; see NEWS.md.
+export("rule", "op", "design_table")
 
-## Deprecated in 1.0.3, to be removed in 1.1.0
-export("ruleF", "ruleFS", "op.F", "op.FS", "op.1stage",
-       "Decision_rule_S.F", "Decision_rule_S.FS", "Decision_rule_S_1stage",
-       "Decision_rule_M.F", "Decision_rule_M.FS", "Decision_rule_M_1stage",
-       "Decision_rule_W.F", "Decision_rule_W.FS", "Decision_rule_W_1stage")
+## Setting up and checking a design
+export("Proportional_odds_assumption", "p2_fun", "theta")
 
-## Internal computational kernels, exported in 1.0.2 and kept exported here
-export("QR_fun", "V_S.over.nk", "W_W", "p_plus", "p_minus", "pq_fun")
+## Asymptotic variance kernels, Appendix equations for the S, M and W tests
+export("V_S.over.nk", "QR_fun", "W_W")
 
 S3method(print, OptOTrialsRule)
 S3method(print, OptOTrialsOC)

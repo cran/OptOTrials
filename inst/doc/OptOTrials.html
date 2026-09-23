@@ -494,16 +494,49 @@ some outcome categories are rare. In those situations an exact approach
 is preferable; see the package reference manual for the relevant
 references.</p>
 </div>
+<div id="the-effect-size-behind-a-design" class="section level2">
+<h2>The effect size behind a design</h2>
+<p><code>theta()</code> gives the win probability that the win odds test
+estimates, and <code>p2_fun()</code> goes the other way, constructing
+the experimental-arm probabilities from a specified odds ratio. Together
+they let a design be set up and read back in clinically meaningful
+terms.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">6</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>th <span class="ot">&lt;-</span> <span class="fu">theta</span>(p1, p2)          <span class="co"># win probability</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="fu">c</span>(<span class="at">win_probability =</span> th, <span class="at">win_odds =</span> th <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> th))</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt; win_probability        win_odds </span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt;       0.6111111       1.5714286</span></span></code></pre></div>
+<p>The asymptotic variance kernels are exported as well, so a threshold
+can be computed at a sample size of your choosing rather than at the
+optimal one:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">28</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>za <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="fl">0.05</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="fu">c</span>(<span class="at">S =</span> za <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="fu">V_S.over.nk</span>(p1, p1) <span class="sc">*</span> n),</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="at">M =</span> za <span class="sc">*</span> <span class="fu">sqrt</span>(((<span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="fu">QR_fun</span>(p1, p1) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="fu">QR_fun</span>(p1, p1)) <span class="sc">/</span> n),</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  <span class="at">W =</span> <span class="fl">0.5</span> <span class="sc">+</span> za <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="fu">W_W</span>(p1, p1) <span class="sc">/</span> n))</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt;         S         M         W </span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; 2.3688600 0.3384086 0.6692043</span></span></code></pre></div>
+</div>
+<div id="a-note-on-the-name-rule" class="section level2">
+<h2>A note on the name <code>rule()</code></h2>
+<p>The <code>cli</code> package also exports a function called
+<code>rule()</code>, and several packages attach <code>cli</code> as a
+dependency – <code>MAMS</code>, used below for comparison, is one. If
+<code>cli</code> is attached after <code>OptOTrials</code>,
+<code>cli::rule()</code> masks the function described here for the rest
+of the session, and a call to <code>rule()</code> fails with an error
+about unused arguments. Attach <code>OptOTrials</code> last, or write
+<code>OptOTrials::rule()</code>.</p>
+</div>
 <div id="moving-from-the-earlier-interface" class="section level2">
 <h2>Moving from the earlier interface</h2>
 <p>Versions up to 1.0.2 provided a separate function for each
 combination of test and stopping rule (<code>ruleF()</code>,
 <code>ruleFS()</code>, <code>op.F()</code>, <code>op.FS()</code>,
 <code>op.1stage()</code> and the <code>Decision_rule_*</code> family).
-These are deprecated in this version: each still works and still returns
-exactly what it always returned, but warns and names its replacement.
-They will be removed in version 1.1.0. The correspondence is tabulated
-in <code>help(&quot;OptOTrials-deprecated&quot;)</code>:</p>
+These were deprecated in 1.0.3, which warned on every call, and are
+removed in 1.1.0. The correspondence is:</p>
 <table>
 <colgroup>
 <col width="50%" />
@@ -511,7 +544,7 @@ in <code>help(&quot;OptOTrials-deprecated&quot;)</code>:</p>
 </colgroup>
 <thead>
 <tr class="header">
-<th>Deprecated</th>
+<th>Removed</th>
 <th>Replacement</th>
 </tr>
 </thead>

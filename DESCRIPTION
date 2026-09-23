@@ -1,8 +1,8 @@
 Package: OptOTrials
 Type: Package
 Title: Optimal Two-Stage Designs for Ordered Categorical Outcomes
-Version: 1.0.3
-Date: 2026-08-26
+Version: 1.1.0
+Date: 2026-08-28
 Authors@R: c(
     person(given = "Yeonhee", family = "Park",
            email = "yeonheepark@skku.edu",
@@ -10,22 +10,20 @@ Authors@R: c(
     person(given = "Yudi", family = "Wang", role = "aut"),
     person(given = "Zhanpeng", family = "Xu", role = "aut"))
 Description: Functions to design and simulate optimal two-stage randomized
-    controlled trials (RCTs) with ordered categorical outcomes, supporting
-    rank-based tests and group-sequential decision rules. Methods build on
-    classical and modern rank tests and two-stage/Group-Sequential designs,
-    e.g., Park (2025) <doi: 10.1371/journal.pone.0318211>. The functions
+    controlled trials (RCTs) with ordered categorical outcomes, using
+    rank-based tests and interim decision rules for futility and superiority,
+    following Park (2025) <doi:10.1371/journal.pone.0318211>. The functions
     'rule()', 'op()' and 'design_table()' provide a single entry point for
     constructing designs, evaluating their operating characteristics, and
-    tabulating several designs at once. The earlier functions, one for each
-    combination of test statistic and stopping rule, are retained and still
-    return the same values, but they are deprecated: each warns and names its
-    replacement, and they will be removed in the next version. Please see the
-    package reference manual and the vignette for details.
+    tabulating several designs at once. The separate functions provided for
+    each combination of test statistic and stopping rule up to version 1.0.2
+    were deprecated in 1.0.3 and are removed here. Please see the package
+    reference manual and the vignette for details.
 License: GPL-3
 Encoding: UTF-8
 Depends: R (>= 4.0)
 Imports: stats
-Suggests: knitr, rmarkdown
+Suggests: knitr, rmarkdown, testthat (>= 3.0.0)
 VignetteBuilder: knitr
 RoxygenNote: 7.3.2
 NeedsCompilation: no
@@ -33,6 +31,6 @@ Author: Yeonhee Park [aut, cre],
   Yudi Wang [aut],
   Zhanpeng Xu [aut]
 Maintainer: Yeonhee Park <yeonheepark@skku.edu>
-Packaged: 2026-08-31 02:32:03 UTC; ypark56
+Packaged: 2026-09-17 14:50:51 UTC; ypark56
 Repository: CRAN
-Date/Publication: 2026-08-31 18:20:02 UTC
+Date/Publication: 2026-09-23 02:30:02 UTC

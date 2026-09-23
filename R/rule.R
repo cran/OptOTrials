@@ -1,8 +1,8 @@
 ## Unified design function.
 ## Added in 1.1.0. Replaces the eleven separate decision-rule functions with a
 ## single entry point whose test and stopping rule are chosen by argument
-## (Reviewer 3, "Code"). The earlier functions remain exported so that existing
-## user code continues to work.
+## (Reviewer 3, "Code"). NEWS.md and the vignette map the earlier calls to this
+## interface.
 
 rule <- function(alpha, beta, p1, p2,
                  test     = c("S", "M", "W"),

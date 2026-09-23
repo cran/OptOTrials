@@ -46,13 +46,19 @@
 }
 
 .validate_design_args <- function(alpha, beta, lambda) {
-  if (!is.numeric(alpha) || length(alpha) != 1L || is.na(alpha) ||
+  if (!is.numeric(alpha) || length(alpha) != 1L || is.na(alpha) || !is.finite(alpha) ||
       alpha <= 0 || alpha >= 1)
     stop("`alpha` must be a single number strictly between 0 and 1.", call. = FALSE)
-  if (!is.numeric(beta) || length(beta) != 1L || is.na(beta) ||
+  if (!is.numeric(beta) || length(beta) != 1L || is.na(beta) || !is.finite(beta) ||
       beta <= 0 || beta >= 1)
     stop("`beta` must be a single number strictly between 0 and 1.", call. = FALSE)
-  if (!is.numeric(lambda) || length(lambda) != 1L || is.na(lambda) || lambda <= 0)
+  .validate_lambda(lambda)
+  invisible(TRUE)
+}
+
+.validate_lambda <- function(lambda) {
+  if (!is.numeric(lambda) || length(lambda) != 1L || is.na(lambda) ||
+      !is.finite(lambda) || lambda <= 0)
     stop("`lambda` must be a single positive number.", call. = FALSE)
   invisible(TRUE)
 }

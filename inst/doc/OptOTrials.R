@@ -35,3 +35,16 @@ design_table(0.05, 0.2, p1, p2, tests = c("S", "M"), criteria = c(1, 3),
 d2 <- rule(0.05, 0.2, p1, p2, test = "M", stopping = "F", criterion = 2)
 d2$substituted
 
+## -----------------------------------------------------------------------------
+p1 <- c(1/3, 1/3, 1/3)
+p2 <- c(1/2, 1/3, 1/6)
+th <- theta(p1, p2)          # win probability
+c(win_probability = th, win_odds = th / (1 - th))
+
+## -----------------------------------------------------------------------------
+n <- 28
+za <- qnorm(0.05, lower.tail = FALSE)
+c(S = za * sqrt(V_S.over.nk(p1, p1) * n),
+  M = za * sqrt(((1 + 1) * QR_fun(p1, p1) + (1 + 1) * QR_fun(p1, p1)) / n),
+  W = 0.5 + za * sqrt(W_W(p1, p1) / n))
+

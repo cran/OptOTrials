@@ -21,7 +21,15 @@ rule(alpha, beta, p1, p2, test = c("S", "M", "W"),
     group. Must be non-negative and sum to 1.}
   \item{p2}{Numeric vector of outcome category probabilities for the
     experimental group. Must be the same length as \code{p1}, non-negative,
-    and sum to 1.}
+    and sum to 1.
+
+    Both vectors are validated on every call: each must be numeric, cover at
+    least two outcome categories, contain no missing or negative values, and
+    sum to one within a tolerance of \code{1e-6}; the two must have the same
+    length. A violation raises an error naming the condition that failed. The
+    tolerance admits floating-point representation error, so exact fractions
+    such as \code{c(1/3, 1/3, 1/3)} pass, while a transcription mistake does
+    not.}
   \item{test}{Test statistic: \code{"S"} the score test under the proportional
     odds model, \code{"M"} the Mann-Whitney-Wilcoxon test, \code{"W"} the win
     odds test.}
@@ -67,12 +75,37 @@ these with labels.
 The name \code{rule} is also used by the \pkg{cli} package, which \pkg{MAMS}
 and several other packages attach. If \pkg{cli} is attached after
 \pkg{OptOTrials}, \code{cli::rule} masks this function for the rest of the
-session. Attach \pkg{OptOTrials} last, or call \code{OptOTrials::rule()}
+session and a call to \code{rule()} will fail with an error about unused
+arguments. Attach \pkg{OptOTrials} last, or call \code{OptOTrials::rule()}
 explicitly.
 }
 \seealso{\code{\link{op}}, \code{\link{design_table}}}
 \examples{
 p1 <- c(0.075, 0.182, 0.319, 0.243, 0.015, 0.166)
 p2 <- p2_fun(p1, log(3.06))
-rule(0.05, 0.2, p1, p2, test = "M", stopping = "F", criterion = 1)
+
+## Printing the object gives a labelled summary of the decision rule,
+## including each boundary on the effect-size scale.
+d <- rule(0.05, 0.2, p1, p2, test = "M", stopping = "F", criterion = 1)
+d                                   # same as print(d)
+
+## The components are named, so nothing has to be indexed by position.
+d$n1                                # stage-1 size
+d$t1f                               # interim futility boundary
+d$n2                                # cumulative size at the final analysis
+d$t2                                # final boundary
+d$effect                            # boundaries as win odds (or odds ratios)
+names(d)
+
+## The object is passed straight to op(); the sample sizes and boundaries
+## never have to be transcribed between the two calls.
+op(d, nsim = 1000, seed = 1234)
+
+## An FS design adds an interim superiority boundary.
+rule(0.05, 0.2, p1, p2, test = "M", stopping = "FS", criterion = 1)
+
+## Minimising E(N | Ha) can return a degenerate optimum. By default it is
+## detected and replaced by the single-stage design, with a warning.
+d2 <- rule(0.05, 0.2, p1, p2, test = "M", stopping = "F", criterion = 2)
+d2$substituted
 }
